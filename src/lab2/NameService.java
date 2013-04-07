@@ -18,8 +18,51 @@ public class NameService {
      * @param fullName - a name containing a first name and a last name
      * @return the last name
      */
-    public String extractLastName(String fullName) {
+    public String extractLastName(String fullName) throws MissingDataException,
+            InvalidDataEntryException {
+        int NumberOfNamesRequired = 2;
+        int minLastNameLength = 2;
+        if (fullName == null || fullName.length() <= 0) {
+            throw new MissingDataException
+                    ("No name was entered.  Try again.");
+        }
         String[] nameParts = fullName.split(" ");
+        if (nameParts.length < NumberOfNamesRequired) {
+            throw new InvalidDataEntryException
+                    ("Not enough data was entered.  "
+                    + "Please enter both your first and last names.");
+        }
+        if (nameParts.length > NumberOfNamesRequired) {
+            throw new InvalidDataEntryException
+                    ("Too much data was entered.  "
+                    + "Please enter your first name, a space, "
+                    + "and your last name.");
+        }
+        if (nameParts[LAST_NAME_IDX].length() < minLastNameLength) {
+            throw new InvalidDataEntryException
+                    ("Last name must be at least " + minLastNameLength
+                    + " characters long.  Try again.");
+        }
+        for (int i = 0; i < nameParts[LAST_NAME_IDX].length(); i++) {
+            char thisChar = nameParts[LAST_NAME_IDX].charAt(i);
+            //check if outside range of alphabetic characters and not a hyphen
+            //in the unicode sequence
+            if ((thisChar < 'A' || thisChar > 'z') && thisChar != '-') { 
+            throw new InvalidDataEntryException
+                    ("Last name must contain only letters.");
+            }
+            //check that the character is not one of the non-alphabetic characers
+            //between 'Z' and 'a' in the unicode sequence
+            if (thisChar > 'Z' && thisChar < 'a') {
+            throw new InvalidDataEntryException
+                    ("Last name must contain only letters.");
+            }
+        }
+        if (nameParts[LAST_NAME_IDX].length() < minLastNameLength) {
+            throw new InvalidDataEntryException
+                    ("Last name must be at least " + minLastNameLength
+                    + " characters long.  Try again.");
+        } 
         return nameParts[LAST_NAME_IDX];
     }
     

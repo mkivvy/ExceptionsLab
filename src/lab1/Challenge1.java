@@ -40,7 +40,8 @@ public class Challenge1 {
         
     }
     
-    public String extractLastName(String fullName) {
+    public String extractLastName(String fullName)throws MissingDataException,
+            InvalidDataEntryException {
         int NumberOfNamesRequired = 2;
         int minLastNameLength = 2;
         if (fullName == null || fullName.length() <= 0) {
@@ -63,7 +64,27 @@ public class Challenge1 {
             throw new InvalidDataEntryException
                     ("Last name must be at least " + minLastNameLength
                     + " characters long.  Try again.");
+        } 
+        for (int i = 0; i < nameParts[LAST_NAME_IDX].length(); i++) {
+            char thisChar = nameParts[LAST_NAME_IDX].charAt(i);
+            //check if outside range of alphabetic characters and not a hyphen
+            //in the unicode sequence
+            if ((thisChar < 'A' || thisChar > 'z') && thisChar != '-') { 
+            throw new InvalidDataEntryException
+                    ("Last name must contain only letters.");
+            }
+            //check that the character is not one of the non-alphabetic characers
+            //between 'Z' and 'a' in the unicode sequence
+            if (thisChar > 'Z' && thisChar < 'a') {
+            throw new InvalidDataEntryException
+                    ("Last name must contain only letters.");
+            }
         }
+        if (nameParts[LAST_NAME_IDX].length() < minLastNameLength) {
+            throw new InvalidDataEntryException
+                    ("Last name must be at least " + minLastNameLength
+                    + " characters long.  Try again.");
+        } 
         invalidName = false;
         return nameParts[LAST_NAME_IDX];
     }
