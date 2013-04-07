@@ -16,18 +16,55 @@ import javax.swing.JOptionPane;
  */
 public class Challenge1 {
     private static final int LAST_NAME_IDX = 1;
+    private static boolean invalidName = true;
 
     public static void main(String[] args) {
         Challenge1 app = new Challenge1();
+        String lastName = " ";
+        String errorTitle = "Name Entry Error";
         
-        String fullName = JOptionPane.showInputDialog("Enter full name:");
-        String lastName = app.extractLastName(fullName);
+        while (invalidName) {
+            try {
+                String fullName = JOptionPane.showInputDialog("Enter full name:");
+                lastName = app.extractLastName(fullName);
+            } catch (MissingDataException mie ) {
+                JOptionPane.showMessageDialog(null, mie.getMessage(), 
+                        errorTitle, JOptionPane.ERROR_MESSAGE);
+            } catch (InvalidDataEntryException ide ) {
+                JOptionPane.showMessageDialog(null, ide.getMessage(), 
+                        errorTitle, JOptionPane.ERROR_MESSAGE);
+            }
+        }
         String msg = "Your last name is: " + lastName;
         JOptionPane.showMessageDialog(null, msg);
+        
     }
     
     public String extractLastName(String fullName) {
+        int NumberOfNamesRequired = 2;
+        int minLastNameLength = 2;
+        if (fullName == null || fullName.length() <= 0) {
+            throw new MissingDataException
+                    ("No name was entered.  Try again.");
+        }
         String[] nameParts = fullName.split(" ");
+        if (nameParts.length < NumberOfNamesRequired) {
+            throw new InvalidDataEntryException
+                    ("Not enough data was entered.  "
+                    + "Please enter both your first and last names.");
+        }
+        if (nameParts.length > NumberOfNamesRequired) {
+            throw new InvalidDataEntryException
+                    ("Too much data was entered.  "
+                    + "Please enter your first name, a space, "
+                    + "and your last name.");
+        }
+        if (nameParts[LAST_NAME_IDX].length() < minLastNameLength) {
+            throw new InvalidDataEntryException
+                    ("Last name must be at least " + minLastNameLength
+                    + " characters long.  Try again.");
+        }
+        invalidName = false;
         return nameParts[LAST_NAME_IDX];
     }
 
